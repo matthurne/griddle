@@ -1,12 +1,12 @@
 package com.commercehub.griddle.opencsv
 
-import com.commercehub.griddle.TabularDataSource
+import com.commercehub.griddle.BaseTabularDataSource
 
-class CSVTabularDataSource implements TabularDataSource {
+class CSVTabularDataSource extends BaseTabularDataSource {
 
     @Override
     void withFile(File file, Closure tableHandler) {
-        def table = new CSVTabularData(file)
+        def table = new CSVTabularData(file, columnNameTransformer, valueTransformer)
         try {
             tableHandler([table])
         } finally {

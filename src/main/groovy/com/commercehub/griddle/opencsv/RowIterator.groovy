@@ -6,12 +6,15 @@ class RowIterator implements Iterator<Map<String, String>> {
 
     private final CSVReader reader
     private final List<String> columnNames
+    private final Closure<String> valueTransformer
     private final Closure<Boolean> rowSkipCriteria
     private String[] nextRow
 
-    RowIterator(CSVReader reader, List<String> columnNames, Closure<Boolean> rowSkipCriteria) {
+    RowIterator(CSVReader reader, List<String> columnNames, Closure<String> valueTransformer,
+                Closure<Boolean> rowSkipCriteria) {
         this.reader = reader
         this.columnNames = columnNames
+        this.valueTransformer = valueTransformer
         this.rowSkipCriteria = rowSkipCriteria
         readNextRow()
     }
@@ -50,7 +53,7 @@ class RowIterator implements Iterator<Map<String, String>> {
         def externalRow = [:]
         columnNames.eachWithIndex{ String columnName, int columnIndex ->
             if (columnName) {
-                externalRow[columnName] = internalRow[columnIndex]
+                externalRow[columnName] = valueTransformer(internalRow[columnIndex])
             }
         }
         return externalRow

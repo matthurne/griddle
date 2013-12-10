@@ -1,9 +1,9 @@
 package com.commercehub.griddle.poi
 
-import com.commercehub.griddle.TabularDataSource
+import com.commercehub.griddle.BaseTabularDataSource
 import org.apache.poi.ss.usermodel.Workbook
 
-abstract class WorkbookTabularDataSource<T extends Workbook> implements TabularDataSource {
+abstract class WorkbookTabularDataSource<T extends Workbook> extends BaseTabularDataSource {
 
     private final ExcelCellMapper cellMapper
 
@@ -17,7 +17,8 @@ abstract class WorkbookTabularDataSource<T extends Workbook> implements TabularD
         try {
             def tables = []
             for (sheetIndex in 0..workbook.numberOfSheets-1) {
-                tables << new SheetTabularData(workbook.getSheetAt(sheetIndex), cellMapper)
+                def sheet = workbook.getSheetAt(sheetIndex)
+                tables << new SheetTabularData(sheet, columnNameTransformer, valueTransformer, cellMapper)
             }
             tableHandler(tables)
         } finally {

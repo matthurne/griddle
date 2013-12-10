@@ -6,13 +6,18 @@ import org.apache.poi.ss.usermodel.Sheet
 class SheetTabularData implements TabularData {
 
     private final Sheet sheet
+    private final Closure<String> valueTransformer
     private final ExcelCellMapper cellMapper
     private final Map<Integer, String> columns
 
-    SheetTabularData(Sheet sheet, ExcelCellMapper cellMapper) {
+    SheetTabularData(Sheet sheet, Closure<String> columnNameTransformer, Closure<String> valueTransformer,
+                     ExcelCellMapper cellMapper) {
         this.sheet = sheet
+        this.valueTransformer = valueTransformer
         this.cellMapper = cellMapper
-        columns = sheet.getRow(0).collectEntries  {[it.columnIndex, cellMapper.mapCell(it).trim()]}.findAll {it.value}
+        columns = sheet.getRow(0).collectEntries  {
+            [it.columnIndex, columnNameTransformer(cellMapper.mapCell(it))]
+        }.findAll {it.value}
     }
 
     @Override
@@ -28,7 +33,7 @@ class SheetTabularData implements TabularData {
     @Override
     Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
         return {
-            new RowIterator(sheet, columns, cellMapper, rowSkipCriteria)
+            new RowIterator(sheet, columns, valueTransformer, cellMapper, rowSkipCriteria)
         } as Iterable<Map<String, String>>
     }
 

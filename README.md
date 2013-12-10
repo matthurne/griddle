@@ -54,6 +54,10 @@ tabularDataSource.withFile(file) { Iterable<TabularData> tables ->
 
 # Extension/Customization
 
+## Column Name / Value Transformer
+
+Sometimes, the column names or values that you want when processing aren't exactly what is present in your file.  For example, you may want to trim whitespace from data cell values, or treat column names in a case-insensitive manner.  To accomplish this, set a transformer using the `setColumnNameTransformer` or `setValueTransformer` methods on `TabularDataSource`.  For common cases, you can use pre-written transformers provided by the `Transformers` class.
+
 ## ExcelCellMapper
 
 Excel cells are actually rather complex.  They have different types, can contain formulas, have styles, have a presentation format, etc.  To control how [Apache POI](http://poi.apache.org/) `Cell`s are converted into `String`s, implement the `ExcelCellMapper` interface and provide an instance to the `HSSFTabularDataSource`/`XSSFTabularDataSource` constructor.

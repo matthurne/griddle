@@ -7,13 +7,15 @@ class RowIterator implements Iterator<Map<String, String>> {
 
     private final Map<Integer, String> columns
     private final ExcelCellMapper cellMapper
+    private final Closure<String> valueTransformer
     private final Closure<Boolean> rowSkipCriteria
     private final Iterator<Row> rowIterator
     private Row nextRow
 
-    RowIterator(Sheet sheet, Map<Integer, String> columns, ExcelCellMapper cellMapper,
+    RowIterator(Sheet sheet, Map<Integer, String> columns, Closure<String> valueTransformer, ExcelCellMapper cellMapper,
                 Closure<Boolean> rowSkipCriteria) {
         this.columns = columns
+        this.valueTransformer = valueTransformer
         this.cellMapper = cellMapper
         this.rowSkipCriteria = rowSkipCriteria
         this.rowIterator = sheet.rowIterator()
@@ -62,7 +64,7 @@ class RowIterator implements Iterator<Map<String, String>> {
         for (cell in internalRow.cellIterator()) {
             def columnName = columns[cell.columnIndex]
             if (columnName) {
-                externalRow[columnName] = cellMapper.mapCell(cell)
+                externalRow[columnName] = valueTransformer(cellMapper.mapCell(cell))
             }
         }
         return externalRow

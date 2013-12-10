@@ -8,14 +8,16 @@ import static au.com.bytecode.opencsv.CSVParser.*
 class CSVTabularData implements TabularData, Closeable {
 
     private File file
+    private final Closure<String> valueTransformer
     private final List<String> columnNames
     private final List<CSVReader> readers = []
 
-    CSVTabularData(File file) {
+    CSVTabularData(File file, Closure<String> columnNameTransformer, Closure<String> valueTransformer) {
         this.file = file
+        this.valueTransformer = valueTransformer
         def reader = openReader()
         try {
-            columnNames = reader.readNext()*.trim()
+            columnNames = reader.readNext().collect(columnNameTransformer)
         } finally {
             closeReader(reader)
         }
@@ -34,7 +36,7 @@ class CSVTabularData implements TabularData, Closeable {
     @Override
     Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
         return {
-            new RowIterator(openReader(1), columnNames, rowSkipCriteria)
+            new RowIterator(openReader(1), columnNames, valueTransformer, rowSkipCriteria)
         } as Iterable<Map<String, String>>
     }
 
