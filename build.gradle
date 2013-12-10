@@ -1,0 +1,71 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3"
+        classpath "com.github.townsfolk:gradle-release:1.2"
+    }
+}
+
+apply plugin: "groovy"
+apply plugin: "idea"
+apply plugin: "maven-publish"
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:2.2.1"
+    compile "net.sf.opencsv:opencsv:2.3"
+    compile "org.apache.poi:poi:3.9"
+    compile "org.apache.poi:poi-ooxml:3.9"
+    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+}
+
+sourceCompatibility = "1.7"
+
+group = "com.commercehub"
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourceJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+        }
+    }
+}
+
+apply plugin: "bintray"
+apply plugin: "release"
+
+bintray {
+    user = project.hasProperty("bintrayUserName") ? bintrayUserName : null
+    key = project.hasProperty("bintrayApiKey") ? bintrayApiKey : null
+    publications = ["mavenJava"]
+    pkg {
+        repo = "main"
+        userOrg = "commercehub-oss"
+        name = "griddle"
+        desc = "A Groovy library for easily processing tabular data"
+        licenses = ["Apache-2.0"]
+    }
+}
+bintrayUpload.dependsOn build, sourceJar, javadocJar
+
+createReleaseTag.dependsOn bintrayUpload
