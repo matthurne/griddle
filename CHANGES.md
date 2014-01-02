@@ -1,5 +1,9 @@
 # Change Log
 
+*   1.1.2
+    *   Properly populates contents of published source JARs.
+    *   No longer publishes Javadoc JARs.
+
 *   1.1.1
     *   Fixes a `NullPointerException` when processing Excel workbooks with empty worksheets.
 
