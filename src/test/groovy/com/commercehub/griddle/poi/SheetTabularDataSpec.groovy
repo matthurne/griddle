@@ -55,10 +55,10 @@ class SheetTabularDataSpec extends Specification {
 
         where:
         valueTransformer           | expectedRows
-        Transformers.noop          | [[ID: "12345", FName: "Joe ", LName: " Wu", Email: " joe@wu.name ", Dept: " "]]
-        Transformers.lowercase     | [[ID: "12345", FName: "joe ", LName: " wu", Email: " joe@wu.name ", Dept: " "]]
-        Transformers.trim          | [[ID: "12345", FName: "Joe", LName: "Wu", Email: "joe@wu.name", Dept: ""]]
-        Transformers.trimLowercase | [[ID: "12345", FName: "joe", LName: "wu", Email: "joe@wu.name", Dept: ""]]
+        Transformers.noop          | [[ID:"12345", FName:"Joe ", LName:" Wu", Email:" joe@wu.name ", Dept:" "]]
+        Transformers.lowercase     | [[ID:"12345", FName:"joe ", LName:" wu", Email:" joe@wu.name ", Dept:" "]]
+        Transformers.trim          | [[ID:"12345", FName:"Joe", LName:"Wu", Email:"joe@wu.name", Dept:""]]
+        Transformers.trimLowercase | [[ID:"12345", FName:"joe", LName:"wu", Email:"joe@wu.name", Dept:""]]
     }
 
     Sheet mockSheet(Row headerRow, Row... dataRows) {
@@ -75,7 +75,7 @@ class SheetTabularDataSpec extends Specification {
     }
 
     Row mockRow(List<String> cellValues, String name) {
-        def row = Mock(Row, name: name)
+        def row = Mock(Row, name:name)
         def cells = []
         cellValues.eachWithIndex { String cellValue, int columnIndex ->
             cells << mockCell(columnIndex, cellValue)

@@ -9,6 +9,7 @@ buildscript {
 }
 
 apply plugin: "groovy"
+apply plugin: "codenarc"
 apply plugin: "idea"
 apply plugin: "maven-publish"
 
@@ -27,6 +28,16 @@ dependencies {
 sourceCompatibility = "1.7"
 
 group = "com.commercehub"
+
+codenarc {
+    toolVersion = "0.20"
+}
+codenarcMain {
+    configFile = file("gradle/codenarcMain.groovy")
+}
+codenarcTest {
+    configFile = file("gradle/codenarcTest.groovy")
+}
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava

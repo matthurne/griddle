@@ -7,7 +7,7 @@ abstract class WorkbookTabularDataSource<T extends Workbook> extends BaseTabular
 
     private final ExcelCellMapper cellMapper
 
-    WorkbookTabularDataSource(ExcelCellMapper cellMapper) {
+    protected WorkbookTabularDataSource(ExcelCellMapper cellMapper) {
         this.cellMapper = cellMapper
     }
 
@@ -16,7 +16,7 @@ abstract class WorkbookTabularDataSource<T extends Workbook> extends BaseTabular
         def workbook = openWorkbook(file)
         try {
             def tables = []
-            for (sheetIndex in 0..workbook.numberOfSheets-1) {
+            for (sheetIndex in 0..workbook.numberOfSheets - 1) {
                 def sheet = workbook.getSheetAt(sheetIndex)
                 tables << new SheetTabularData(sheet, columnNameTransformer, valueTransformer, cellMapper)
             }

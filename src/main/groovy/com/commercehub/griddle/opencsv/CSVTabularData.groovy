@@ -61,7 +61,7 @@ class CSVTabularData implements TabularData, Closeable {
     private void closeReader(CSVReader reader) {
         try {
             reader.close()
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) { }
         readers.remove(reader)
     }
 

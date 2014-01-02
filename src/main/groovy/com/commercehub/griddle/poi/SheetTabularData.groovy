@@ -19,7 +19,7 @@ class SheetTabularData implements TabularData {
         if (headerRow) {
             columns = headerRow.collectEntries {
                 [it.columnIndex, columnNameTransformer(cellMapper.mapCell(it))]
-            }.findAll {it.value}
+            }.findAll { it.value }
         } else {
             columns = [:]
         }

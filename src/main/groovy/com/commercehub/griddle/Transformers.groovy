@@ -1,5 +1,6 @@
 package com.commercehub.griddle
 
+@SuppressWarnings("PropertyName")
 final class Transformers {
 
     static final Closure<String> noop = { String str -> str }
