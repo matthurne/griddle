@@ -9,6 +9,7 @@ class XSSFTabularDataSourceSpec extends Specification {
     private static final File FILE2 = getFile("/xssf/spreadsheet2.xlsx")
     private static final File FILE3 = getFile("/xssf/spreadsheet3.xlsx")
     private static final File FILE4 = getFile("/xssf/spreadsheet4.xlsx")
+    private static final File FILE5 = getFile("/xssf/spreadsheet5.xlsx") // sheet with no rows
 
     def tabularDataSource = new XSSFTabularDataSource()
 
@@ -29,6 +30,7 @@ class XSSFTabularDataSourceSpec extends Specification {
         FILE2 | 1
         FILE3 | 1
         FILE4 | 1
+        FILE5 | 2
     }
 
     def "tables have expected columnNames"() {
@@ -50,6 +52,7 @@ class XSSFTabularDataSourceSpec extends Specification {
         FILE2 | [["Zip-a-Dee-Doo-Dah", "Zip-a-dee-ay"]]
         FILE3 | [[]]
         FILE4 | [["Column 1", "Column 2", "Column 4"]]
+        FILE5 | [["Column A", "Column B"], []]
     }
 
     def "table rows have expected values"() {
@@ -71,6 +74,7 @@ class XSSFTabularDataSourceSpec extends Specification {
         FILE2 | [[["Zip-a-Dee-Doo-Dah":"My, oh my what a wonderful day!", "Zip-a-dee-ay":"Plenty of sunshine heading my way"], ["Zip-a-Dee-Doo-Dah":"Zip-a-Dee-Doo-Dah", "Zip-a-dee-ay":"Zip-a-dee-ay"]]]
         FILE3 | [[]]
         FILE4 | [[["Column 1":"Row 1 Column 1", "Column 4":"Row 1 Column 4"], ["Column 1":"Row 3 Column 1", "Column 2":"Row 3 Column 2", "Column 4":"Row 3 Column 4"], ["Column 1":"Row 4 Column 1", "Column 2":"Row 4 Column 2", "Column 4":"Row 4 Column 4"]]]
+        FILE5 | [[["Column A": "A2", "Column B": "B2"], ["Column A": "A3", "Column B": "B3"]], []]
     }
 
     private static File getFile(String resourcePath) {

@@ -15,9 +15,14 @@ class SheetTabularData implements TabularData {
         this.sheet = sheet
         this.valueTransformer = valueTransformer
         this.cellMapper = cellMapper
-        columns = sheet.getRow(0).collectEntries  {
-            [it.columnIndex, columnNameTransformer(cellMapper.mapCell(it))]
-        }.findAll {it.value}
+        def headerRow = sheet.getRow(0)
+        if (headerRow) {
+            columns = headerRow.collectEntries {
+                [it.columnIndex, columnNameTransformer(cellMapper.mapCell(it))]
+            }.findAll {it.value}
+        } else {
+            columns = [:]
+        }
     }
 
     @Override
