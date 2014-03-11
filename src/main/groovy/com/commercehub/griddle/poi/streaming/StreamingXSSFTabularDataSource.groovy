@@ -12,21 +12,19 @@ class StreamingXSSFTabularDataSource extends BaseTabularDataSource {
 
     protected OPCPackage ocpPackage
 
-    public StreamingXSSFTabularDataSource() {}
-
     @Override
     void withFile(File file, Closure tableHandler) {
         try {
             def tables = []
 
-            def reader = getReader(file);
+            def reader = getReader(file)
             def sst = new ReadOnlySharedStringsTable(ocpPackage)
             def stylesTable = reader.stylesTable
 
             def use1904DateWindowing = getWorkbookUses1904DateWindowing(reader)
 
             for (sheetInputStream in reader.sheetsData) {
-                tables << buildStreamingXSSFTabularData(sheetInputStream, stylesTable, sst, use1904DateWindowing);
+                tables << streamingXSSFTabularDataBuilder(sheetInputStream, stylesTable, sst, use1904DateWindowing)
                 sheetInputStream.close()
             }
             tableHandler(tables)
@@ -35,19 +33,20 @@ class StreamingXSSFTabularDataSource extends BaseTabularDataSource {
         }
     }
 
-    protected StreamingXSSFTabularData buildStreamingXSSFTabularData(InputStream sheetInputStream, StylesTable stylesTable,
-                                                            ReadOnlySharedStringsTable sst,
-                                                            boolean use1904DateWindowing) {
+    protected StreamingXSSFTabularData streamingXSSFTabularDataBuilder(InputStream sheetInputStream,
+                                                                       StylesTable stylesTable,
+                                                                       ReadOnlySharedStringsTable sst,
+                                                                       boolean use1904DateWindowing) {
         return new StreamingXSSFTabularData(sheetInputStream, stylesTable, sst, columnNameTransformer,
                 valueTransformer, use1904DateWindowing)
     }
 
     protected boolean getWorkbookUses1904DateWindowing(XSSFReader reader) {
-        def workbookXML = reader.getWorkbookData();
+        def workbookXML = reader.workbookData
         def workbookDocument = WorkbookDocument.Factory.parse(workbookXML)
-        def workbook = workbookDocument.getWorkbook()
-        def prefix = workbook.getWorkbookPr()
-        return prefix.getDate1904()
+        def workbook = workbookDocument.workbook
+        def prefix = workbook.workbookPr
+        return prefix.date1904
     }
 
     protected XSSFReader getReader(File file) {

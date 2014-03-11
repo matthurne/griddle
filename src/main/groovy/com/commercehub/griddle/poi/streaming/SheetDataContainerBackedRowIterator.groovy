@@ -3,7 +3,7 @@ package com.commercehub.griddle.poi.streaming
 class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String>> {
     private final Map<Integer, String> transformedColumns
     private final Closure<String> valueTransformer
-    private final  mapper;
+    private final mapper
     private final Closure<Boolean> rowSkipCriteria
 
     private final SheetDataContainer backingData
@@ -19,7 +19,7 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
         this.mapper = mapper
         this.rowSkipCriteria = rowSkipCriteria
 
-        this.delegateIterator = this.backingData.getDataContainer().entrySet().iterator();
+        this.delegateIterator = this.backingData.dataContainer.entrySet().iterator()
 
         if (transformedColumns) {
             readNextRow()
@@ -64,7 +64,7 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
         for (Map.Entry<Integer, String> entry in toTransform.entrySet().iterator()) {
             def columnName = transformedColumns.get(entry.key)
             if (columnName) {
-                def val = valueTransformer(entry.value);
+                def val = valueTransformer(entry.value)
                 externalRow[columnName] = val
             }
         }

@@ -37,6 +37,7 @@ class StreamingXSSFTabularDataSourceSpec extends Specification {
         FILE6 | 1
     }
 
+    @SuppressWarnings("LineLength")
     def "tables have expected columnNames"() {
         def actualColumnNames = []
 
@@ -57,7 +58,7 @@ class StreamingXSSFTabularDataSourceSpec extends Specification {
         FILE3 | [["123", "456", "789"]]
         FILE4 | [["Column 1", "Column 2", "Column 4"]]
         FILE5 | [["Column A", "Column B"], []]
-        FILE6 | [["Column A", "Column B"]]
+        FILE6 | [["Column A", "Column B", "Column C"]]
     }
 
     @SuppressWarnings("LineLength")
@@ -81,7 +82,7 @@ class StreamingXSSFTabularDataSourceSpec extends Specification {
         FILE3 | [[["123":"012", "456":"345", "789":"678"], ["123":"9", "456":"10", "789":"11"], ["123":"Aa", "456":"Bb", "789":"Cc"], ["123":"Dd", "456":"Ee", "789":"Ff"]]]
         FILE4 | [[["Column 1":"Row 1 Column 1", "Column 4":"Row 1 Column 4"], ["Column 1":"Row 3 Column 1", "Column 2":"Row 3 Column 2", "Column 4":"Row 3 Column 4"], ["Column 1":"Row 4 Column 1", "Column 2":"Row 4 Column 2", "Column 4":"Row 4 Column 4"]]]
         FILE5 | [[["Column A":"A2", "Column B":"B2"], ["Column A":"A3", "Column B":"B3"]], []]
-        FILE6 | [[["Column A":"21212.4444", "Column B":"1/12/01"]]]
+        FILE6 | [[["Column A":"a", "Column B":"21212.4444", "Column C":"1/12/01"]]]
     }
 
     @SuppressWarnings("LineLength")
@@ -89,7 +90,7 @@ class StreamingXSSFTabularDataSourceSpec extends Specification {
         def actualRows = []
 
         when:
-        tabularDataSource.setValueTransformer(Transformers.lowercase);
+        tabularDataSource.setValueTransformer(Transformers.lowercase)
         tabularDataSource.withFile(file) { Iterable<TabularData> tables ->
             for (table in tables) {
                 actualRows << table.rows.collect()
@@ -106,7 +107,7 @@ class StreamingXSSFTabularDataSourceSpec extends Specification {
         FILE3 | [[["123":"012", "456":"345", "789":"678"], ["123":"9", "456":"10", "789":"11"], ["123":"aa", "456":"bb", "789":"cc"], ["123":"dd", "456":"ee", "789":"ff"]]]
         FILE4 | [[["Column 1":"row 1 column 1", "Column 4":"row 1 column 4"], ["Column 1":"row 3 column 1", "Column 2":"row 3 column 2", "Column 4":"row 3 column 4"], ["Column 1":"row 4 column 1", "Column 2":"row 4 column 2", "Column 4":"row 4 column 4"]]]
         FILE5 | [[["Column A":"a2", "Column B":"b2"], ["Column A":"a3", "Column B":"b3"]], []]
-        FILE6 | [[["Column A":"21212.4444", "Column B":"1/12/01"]]]
+        FILE6 | [[["Column A":"a", "Column B":"21212.4444", "Column C":"1/12/01"]]]
     }
 
     @SuppressWarnings("LineLength")
@@ -114,7 +115,7 @@ class StreamingXSSFTabularDataSourceSpec extends Specification {
         def actualRows = []
 
         when:
-        tabularDataSource.setColumnNameTransformer(Transformers.lowercase);
+        tabularDataSource.setColumnNameTransformer(Transformers.lowercase)
         tabularDataSource.withFile(file) { Iterable<TabularData> tables ->
             for (table in tables) {
                 actualRows << table.rows.collect()
@@ -132,7 +133,7 @@ class StreamingXSSFTabularDataSourceSpec extends Specification {
         FILE4 | [[["column 1":"Row 1 Column 1", "column 4":"Row 1 Column 4"], ["column 1":"Row 3 Column 1", "column 2":"Row 3 Column 2", "column 4":"Row 3 Column 4"], ["column 1":"Row 4 Column 1", "column 2":"Row 4 Column 2", "column 4":"Row 4 Column 4"]]]
         FILE5 | [[["column a":"A2", "column b":"B2"], ["column a":"A3", "column b":"B3"]], []]
         FILE5 | [[["column a":"A2", "column b":"B2"], ["column a":"A3", "column b":"B3"]], []]
-        FILE6 | [[["column a":"21212.4444", "column b":"1/12/01"]]]
+        FILE6 | [[["column a":"a", "column b":"21212.4444", "column c":"1/12/01"]]]
     }
 
     private static File getFile(String resourcePath) {

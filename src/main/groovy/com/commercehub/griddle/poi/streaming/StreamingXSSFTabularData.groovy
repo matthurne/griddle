@@ -8,9 +8,7 @@ import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler
 import org.apache.poi.xssf.model.StylesTable
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
-import org.xml.sax.XMLReader
 
-import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
@@ -22,6 +20,7 @@ class StreamingXSSFTabularData implements TabularData {
     protected final Map<Integer, String> transformedColumnNames
 
     protected SheetDataContainer dataContainer
+    protected use1904DateWindowing
 
     StreamingXSSFTabularData(InputStream inputStream,
                              StylesTable stylesTable,
@@ -36,8 +35,8 @@ class StreamingXSSFTabularData implements TabularData {
 
         loadSheet(new SheetDataExtractor(dataContainer), stylesTable, sharedStringsTable, inputStream, use1904DateWindowing)
 
-        if (dataContainer.getHeaders()) {
-            transformedColumnNames = dataContainer.getHeaders().collectEntries {
+        if (dataContainer.headers) {
+            transformedColumnNames = dataContainer.headers.collectEntries {
                 [(Integer) it.key, columnNameTransformer(it.value)]
             }.findAll { it.value }
         } else {
@@ -74,42 +73,38 @@ class StreamingXSSFTabularData implements TabularData {
             throws IOException, SAXException {
 
         def sheetSource = new InputSource(sheetInputStream)
-        SAXParserFactory saxFactory = SAXParserFactory.newInstance()
-        try {
-            SAXParser saxParser = saxFactory.newSAXParser()
-            XMLReader sheetParser = saxParser.getXMLReader()
-            org.xml.sax.ContentHandler handler = buildHandler(stylesTable, sharedStringsTable, sheetContentsExtractor,
-                    use1904DateWindowing);
+        def saxFactory = SAXParserFactory.newInstance()
+        SAXParser saxParser = saxFactory.newSAXParser()
+        def sheetParser = saxParser.XMLReader
+        this.use1904DateWindowing = use1904DateWindowing
+        org.xml.sax.ContentHandler handler = handlerBuilder(stylesTable, sharedStringsTable, sheetContentsExtractor)
 
-            sheetParser.setContentHandler(handler)
-            sheetParser.parse(sheetSource)
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage())
-        }
+        sheetParser.setContentHandler(handler)
+        sheetParser.parse(sheetSource)
     }
 
     // XSSFSheetXMLHandler does not seem to abide to 1904DateWindowing.
     // It also formats per excel formatting rules.  If you want more raw data out, override this and
     // return your own XSSFSheetXMLHandler handler.
-    protected XSSFSheetXMLHandler buildHandler(StylesTable stylesTable, ReadOnlySharedStringsTable sst,
-                                               XSSFSheetXMLHandler.SheetContentsHandler sheetContentsExtractor,
-                                               boolean use1904DateWindowing) {
+    protected XSSFSheetXMLHandler handlerBuilder(StylesTable stylesTable, ReadOnlySharedStringsTable sst,
+                                                 XSSFSheetXMLHandler.SheetContentsHandler sheetContentsExtractor) {
+
         def formatter = new DataFormatter()
         return new XSSFSheetXMLHandler(
                 stylesTable, sst, sheetContentsExtractor, formatter, false)
     }
 
     protected class SheetDataExtractor implements XSSFSheetXMLHandler.SheetContentsHandler {
-        def boolean atHeaderRow = true
-        def dataContainer
-        def currentRowNumber
-        def Map<Integer, String> currentRow
+        boolean atHeaderRow = true
+        SheetDataContainer dataContainer
+        int currentRowNumber
+        Map<Integer, String> currentRow
 
         protected SheetDataExtractor(SheetDataContainer dataContainer) {
             this.dataContainer = dataContainer
         }
 
-        public void startRow(int rowNum) {
+        void startRow(int rowNum) {
             currentRowNumber = rowNum
             if (currentRowNumber == 0) {
                 atHeaderRow = true
@@ -118,7 +113,7 @@ class StreamingXSSFTabularData implements TabularData {
             currentRow = new TreeMap<Integer, String>()
         }
 
-        public void endRow() {
+        void endRow() {
             if (atHeaderRow) {
                 atHeaderRow = false
                 dataContainer.setHeaders(currentRow)
@@ -127,13 +122,14 @@ class StreamingXSSFTabularData implements TabularData {
             }
         }
 
-        public void cell(String cellRef, String formattedValue) {
+        void cell(String cellRef, String formattedValue) {
             def ref = new CellReference(cellRef)
-            currentRow.put((Integer) ref.getCol(), formattedValue)
+            currentRow.put((Integer) ref.col, formattedValue)
         }
 
-        public void headerFooter(String text, boolean isHeader, String tagName) {
-            // Not what you would think
+        @SuppressWarnings(["EmptyMethod", "UnusedMethodParameter"])
+        void headerFooter(String text, boolean isHeader, String tagName) {
+            // ignoring, we have no need to identify an excel header or footer.
         }
     }
 }
