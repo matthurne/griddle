@@ -22,6 +22,8 @@ dependencies {
     compile "net.sf.opencsv:opencsv:2.3"
     compile "org.apache.poi:poi:3.9"
     compile "org.apache.poi:poi-ooxml:3.9"
+    compile "org.apache.poi:ooxml-schemas:1.1"
+
     testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
 }
 

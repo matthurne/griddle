@@ -6,47 +6,58 @@ import org.apache.poi.openxml4j.opc.PackageAccess
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable
 import org.apache.poi.xssf.eventusermodel.XSSFReader
 import org.apache.poi.xssf.model.StylesTable
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument
 
 class StreamingXSSFTabularDataSource extends BaseTabularDataSource {
-    private final ExcelCellElementMapper cellMapper
-    private OPCPackage ocpPackage
 
+    protected OPCPackage ocpPackage
 
-    public StreamingXSSFTabularDataSource() {
-        this.cellMapper = new SimpleExcelCellElementMapper();
-    }
-
-    public StreamingXSSFTabularDataSource(ExcelCellElementMapper cellMapper) {
-        this.cellMapper = cellMapper
-    }
+    public StreamingXSSFTabularDataSource() {}
 
     @Override
     void withFile(File file, Closure tableHandler) {
         try {
-            List<StreamingXSSFTabularData> tables = []
+            def tables = []
 
-            XSSFReader reader = getReader(file);
-            ReadOnlySharedStringsTable sst = new ReadOnlySharedStringsTable(ocpPackage);
-            StylesTable stylesTable = reader.getStylesTable();
+            def reader = getReader(file);
+            def sst = new ReadOnlySharedStringsTable(ocpPackage)
+            def stylesTable = reader.stylesTable
 
-            for (InputStream sheetInputStream in reader.getSheetsData()) {
-                tables << new StreamingXSSFTabularData(sheetInputStream, stylesTable, sst, columnNameTransformer, valueTransformer, cellMapper)
+            def use1904DateWindowing = getWorkbookUses1904DateWindowing(reader)
+
+            for (sheetInputStream in reader.sheetsData) {
+                tables << buildStreamingXSSFTabularData(sheetInputStream, stylesTable, sst, use1904DateWindowing);
                 sheetInputStream.close()
             }
             tableHandler(tables)
         } finally {
-            cleanup();
+            cleanup()
         }
     }
 
-    private getReader(File file) {
-        ocpPackage = OPCPackage.open(file, PackageAccess.READ);
-        return new XSSFReader(ocpPackage);
+    protected StreamingXSSFTabularData buildStreamingXSSFTabularData(InputStream sheetInputStream, StylesTable stylesTable,
+                                                            ReadOnlySharedStringsTable sst,
+                                                            boolean use1904DateWindowing) {
+        return new StreamingXSSFTabularData(sheetInputStream, stylesTable, sst, columnNameTransformer,
+                valueTransformer, use1904DateWindowing)
     }
 
-    private cleanup() {
+    protected boolean getWorkbookUses1904DateWindowing(XSSFReader reader) {
+        def workbookXML = reader.getWorkbookData();
+        def workbookDocument = WorkbookDocument.Factory.parse(workbookXML)
+        def workbook = workbookDocument.getWorkbook()
+        def prefix = workbook.getWorkbookPr()
+        return prefix.getDate1904()
+    }
+
+    protected XSSFReader getReader(File file) {
+        ocpPackage = OPCPackage.open(file, PackageAccess.READ)
+        return new XSSFReader(ocpPackage)
+    }
+
+    protected void cleanup() {
         if (ocpPackage != null) {
-            ocpPackage.close();
+            ocpPackage.close()
         }
     }
 }

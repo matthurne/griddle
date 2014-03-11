@@ -3,14 +3,15 @@ package com.commercehub.griddle.poi.streaming
 class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String>> {
     private final Map<Integer, String> transformedColumns
     private final Closure<String> valueTransformer
-    private final ExcelCellElementMapper mapper;
+    private final  mapper;
     private final Closure<Boolean> rowSkipCriteria
 
     private final SheetDataContainer backingData
     private final Iterator<Map<Integer, String>> delegateIterator
     private Map<Integer, String> nextValue
 
-    SheetDataContainerBackedRowIterator(SheetDataContainer backingData, Map<Integer, String> transformedColumns, Closure<String> valueTransformer, SimpleExcelCellElementMapper mapper,
+    SheetDataContainerBackedRowIterator(SheetDataContainer backingData, Map<Integer, String> transformedColumns,
+                                        Closure<String> valueTransformer,
                                         Closure<Boolean> rowSkipCriteria) {
         this.backingData = backingData
         this.transformedColumns = transformedColumns
@@ -60,10 +61,10 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
 
     private Map<String, String> toExternalRow(Map<Integer, String> toTransform) {
         def externalRow = [:]
-        for (Map.Entry<Integer, String> entry : toTransform.entrySet().iterator()) {
+        for (Map.Entry<Integer, String> entry in toTransform.entrySet().iterator()) {
             def columnName = transformedColumns.get(entry.key)
             if (columnName) {
-                def val = valueTransformer(mapper.mapStringValue(entry.value));
+                def val = valueTransformer(entry.value);
                 externalRow[columnName] = val
             }
         }
