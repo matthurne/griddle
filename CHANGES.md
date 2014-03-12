@@ -1,4 +1,7 @@
 # Change Log
+*   1.2.0
+    *   Upgrade to POI 3.10-FINAL.
+    *   Add support for a stream based Excel reader/parser, useful for lower memory footprints.
 
 *   1.1.2
     *   Properly populates contents of published source JARs.
