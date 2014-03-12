@@ -6,7 +6,7 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
     private final Closure<Boolean> rowSkipCriteria
 
     private final SheetDataContainer backingData
-    private final Iterator<Map<Integer, String>> delegateIterator
+    private final Iterator<Map.Entry<Integer, String>> delegateIterator
     private Map<Integer, String> nextRowValuesByColumnIndex
 
     SheetDataContainerBackedRowIterator(SheetDataContainer backingData, Map<Integer, String> transformedColumns,
@@ -17,6 +17,7 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
         this.valueTransformer = valueTransformer
         this.rowSkipCriteria = rowSkipCriteria
 
+        //Cannot assign Iterator<Entry<Integer,Map<Integer, String>>>' to 'Iterator<Map<Integer, String>>
         this.delegateIterator = this.backingData.dataContainer.entrySet().iterator()
 
         if (transformedColumns) {
