@@ -6,7 +6,7 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
     private final Closure<Boolean> rowSkipCriteria
 
     private final SheetDataContainer backingData
-    private final Iterator<Map.Entry<Integer, String>> delegateIterator
+    private final Iterator<Map.Entry<Integer, Map<Integer, String>>> delegateIterator
     private Map<Integer, String> nextRowValuesByColumnIndex
 
     SheetDataContainerBackedRowIterator(SheetDataContainer backingData, Map<Integer, String> transformedColumns,
