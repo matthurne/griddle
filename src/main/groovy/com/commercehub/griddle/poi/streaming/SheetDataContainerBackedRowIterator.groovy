@@ -7,7 +7,7 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
 
     private final SheetDataContainer backingData
     private final Iterator<Map<Integer, String>> delegateIterator
-    private Map<Integer, String> nextValue
+    private Map<Integer, String> nextRowValuesByColumnIndex
 
     SheetDataContainerBackedRowIterator(SheetDataContainer backingData, Map<Integer, String> transformedColumns,
                                         Closure<String> valueTransformer,
@@ -22,22 +22,22 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
         if (transformedColumns) {
             readNextRow()
         } else {
-            nextValue = null // If there aren't any defined columns, there will never be any meaningful row data
+            nextRowValuesByColumnIndex = null // If there aren't any defined columns, there will never be any meaningful row data
         }
     }
 
     @Override
     boolean hasNext() {
-        return nextValue != null
+        return nextRowValuesByColumnIndex != null
     }
 
     // returns column name -> value
     @Override
     Map<String, String> next() {
-        if (nextValue == null) {
+        if (nextRowValuesByColumnIndex == null) {
             throw new NoSuchElementException()
         }
-        def next = toExternalRow(nextValue)
+        def next = toExternalRow(nextRowValuesByColumnIndex)
         readNextRow()
         return next
     }
@@ -48,11 +48,11 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
     }
 
     private void readNextRow() {
-        nextValue = null
-        while (delegateIterator.hasNext() && nextValue == null) {
+        nextRowValuesByColumnIndex = null
+        while (delegateIterator.hasNext() && nextRowValuesByColumnIndex == null) {
             Map<Integer, String> next = delegateIterator.next().value
             if (!rowSkipCriteria(toExternalRow(next))) {
-                nextValue = next
+                nextRowValuesByColumnIndex = next
             }
         }
     }
