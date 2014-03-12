@@ -59,7 +59,7 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
 
     private Map<String, String> toExternalRow(Map<Integer, String> toTransform) {
         def externalRow = [:]
-        for (Map.Entry<Integer, String> entry in toTransform.entrySet().iterator()) {
+        for (entry in toTransform) {
             def columnName = transformedColumns.get(entry.key)
             if (columnName) {
                 def val = valueTransformer(entry.value)
