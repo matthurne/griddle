@@ -70,6 +70,6 @@ Excel cells are actually rather complex.  They have different types, can contain
 
 Sometimes, it may be useful to ignore certain rows in the file.  To do this, when calling the `getRows` method on `TabularDataSource`, pass a closure defining your row skip criteria.  This closure is passed the row `Map` as the argument, and should return `true` if the row should be skipped.
 
-## Modifying output formatting when using `StreamingXSSFTabularDataSource`
+## Modifying formatting when using StreamingXSSFTabularDataSource
 
-The `StreamingXSSFTabularDataSource` relies on `org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler` to format output, which provides for minimal formatting extension points.  Overriding the handlerBuilder method of `StreamingXSSFTabularDataSource` to return a customized `org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler` is the only current mechanism to modify formatting behavior.
+The `StreamingXSSFTabularDataSource` relies on `org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler` to format output, which provides for minimal formatting extension points.  Overriding the handlerBuilder method of `StreamingXSSFTabularData` to return a customized `org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler` is the only current mechanism to manipulate the default formatting/mapping behavior.
