@@ -57,7 +57,7 @@ class XSSFTabularDataSourceSpec extends Specification {
         FILE3 | [[]]
         FILE4 | [["Column 1", "Column 2", "Column 4"]]
         FILE5 | [["Column A", "Column B"], []]
-        FILE6 | [["Column A", "Column B", "Column C"]]
+        FILE6 | [["Column A", "Numeric Data With Decimal", "Date Data"]]
     }
 
     @SuppressWarnings("LineLength")
@@ -81,7 +81,7 @@ class XSSFTabularDataSourceSpec extends Specification {
         FILE3 | [[]]
         FILE4 | [[["Column 1":"Row 1 Column 1", "Column 4":"Row 1 Column 4"], ["Column 1":"Row 3 Column 1", "Column 2":"Row 3 Column 2", "Column 4":"Row 3 Column 4"], ["Column 1":"Row 4 Column 1", "Column 2":"Row 4 Column 2", "Column 4":"Row 4 Column 4"]]]
         FILE5 | [[["Column A":"A2", "Column B":"B2"], ["Column A":"A3", "Column B":"B3"]], []]
-        FILE6 | [[["Column A":"a", "Column B":"", "Column C":""]]]
+        FILE6 | [[["Column A":"a", "Date Data":"", "Numeric Data With Decimal":""]]]
     }
 
     @SuppressWarnings("LineLength")
@@ -106,7 +106,7 @@ class XSSFTabularDataSourceSpec extends Specification {
         FILE3 | [[]]
         FILE4 | [[["Column 1":"row 1 column 1", "Column 4":"row 1 column 4"], ["Column 1":"row 3 column 1", "Column 2":"row 3 column 2", "Column 4":"row 3 column 4"], ["Column 1":"row 4 column 1", "Column 2":"row 4 column 2", "Column 4":"row 4 column 4"]]]
         FILE5 | [[["Column A":"a2", "Column B":"b2"], ["Column A":"a3", "Column B":"b3"]], []]
-        FILE6 | [[["Column A":"a", "Column B":"", "Column C":""]]]
+        FILE6 | [[["Column A":"a", "Date Data":"", "Numeric Data With Decimal":""]]]
     }
 
     @SuppressWarnings("LineLength")
@@ -131,7 +131,7 @@ class XSSFTabularDataSourceSpec extends Specification {
         FILE3 | [[]]
         FILE4 | [[["column 1":"Row 1 Column 1", "column 4":"Row 1 Column 4"], ["column 1":"Row 3 Column 1", "column 2":"Row 3 Column 2", "column 4":"Row 3 Column 4"], ["column 1":"Row 4 Column 1", "column 2":"Row 4 Column 2", "column 4":"Row 4 Column 4"]]]
         FILE5 | [[["column a":"A2", "column b":"B2"], ["column a":"A3", "column b":"B3"]], []]
-        FILE6 | [[["column a":"a", "column b":"", "column c":""]]]
+        FILE6 | [[["column a":"a", "date data":"", "numeric data with decimal":""]]]
     }
 
     private static File getFile(String resourcePath) {
