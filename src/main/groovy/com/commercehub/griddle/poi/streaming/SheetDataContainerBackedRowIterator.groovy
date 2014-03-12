@@ -17,7 +17,6 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
         this.valueTransformer = valueTransformer
         this.rowSkipCriteria = rowSkipCriteria
 
-        //Cannot assign Iterator<Entry<Integer,Map<Integer, String>>>' to 'Iterator<Map<Integer, String>>
         this.delegateIterator = this.backingData.dataContainer.entrySet().iterator()
 
         if (transformedColumns) {
