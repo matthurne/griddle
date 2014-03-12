@@ -2,6 +2,8 @@
 
 Griddle is a [Groovy](http://groovy.codehaus.org) library for easily processing tabular data.  Currently, it supports Excel files (both HSSF and XSSF) and CSV files.
 
+[![Build Status](https://travis-ci.org/commercehub-oss/griddle.png?branch=master)](https://travis-ci.org/commercehub-oss/griddle)
+
 # Usage
 
 First, add a dependency to your build file.  Releases are published to [Bintray JCenter](https://bintray.com/bintray/jcenter).  See the [change log](CHANGES.md) for the latest version.
