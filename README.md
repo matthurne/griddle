@@ -35,6 +35,8 @@ def tabularDataSource = new CSVTabularDataSource()
 def tabularDataSource = new HSSFTabularDataSource()
 // OR
 def tabularDataSource = new XSSFTabularDataSource()
+// OR
+def tabularDataSource = new StreamingXSSFTabularDataSource()
 ```
 
 Then use the `TabularDataSource` to process files.  The `withFile` method is used to provide access to `TabularData` objects processed from a file.  Each `TabularData` object provides access to the names of the columns in that table, as well as the rows in the table (represented as a `Map` of `String`, column name to cell value).  The file is automatically closed at the end of the closure passed to `withFile`.
@@ -60,8 +62,12 @@ Sometimes, the column names or values that you want when processing aren't exact
 
 ## ExcelCellMapper
 
-Excel cells are actually rather complex.  They have different types, can contain formulas, have styles, have a presentation format, etc.  To control how [Apache POI](http://poi.apache.org/) `Cell`s are converted into `String`s, implement the `ExcelCellMapper` interface and provide an instance to the `HSSFTabularDataSource`/`XSSFTabularDataSource` constructor.
+Excel cells are actually rather complex.  They have different types, can contain formulas, have styles, have a presentation format, etc.  To control how [Apache POI](http://poi.apache.org/) `Cell`s are converted into `String`s, implement the `ExcelCellMapper` interface and provide an instance to the `HSSFTabularDataSource`/`XSSFTabularDataSource` constructor.  Note, the `StreamingXSSFTabularDataSource` does not yet support cell mapping using this mechanism.
 
 ## Row Skip Criteria
 
 Sometimes, it may be useful to ignore certain rows in the file.  To do this, when calling the `getRows` method on `TabularDataSource`, pass a closure defining your row skip criteria.  This closure is passed the row `Map` as the argument, and should return `true` if the row should be skipped.
+
+## Modifying output formatting when using `StreamingXSSFTabularDataSource`
+
+The `StreamingXSSFTabularDataSource` relies on `org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler` to format output, which provides for minimal formatting extension points.  Overriding the handlerBuilder method of `StreamingXSSFTabularDataSource` to return a customized `org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler` is the only current mechanism to modify formatting behavior.
