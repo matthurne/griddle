@@ -1,4 +1,7 @@
 # Change Log
+*   1.2.1
+    *   POI: only apply cell mappings/transformations once per row. [#4](https://github.com/commercehub-oss/griddle/issues/4)
+
 *   1.2.0
     *   Upgrade to POI 3.10-FINAL.
     *   Add support for a stream based Excel reader/parser, useful for lower memory footprints.
