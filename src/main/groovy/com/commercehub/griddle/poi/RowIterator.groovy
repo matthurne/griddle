@@ -10,7 +10,7 @@ class RowIterator implements Iterator<Map<String, String>> {
     private final Closure<String> valueTransformer
     private final Closure<Boolean> rowSkipCriteria
     private final Iterator<Row> rowIterator
-    private Row nextRow
+    private Map<String, String> nextValue
 
     RowIterator(Sheet sheet, Map<Integer, String> columns, Closure<String> valueTransformer, ExcelCellMapper cellMapper,
                 Closure<Boolean> rowSkipCriteria) {
@@ -25,23 +25,23 @@ class RowIterator implements Iterator<Map<String, String>> {
             }
             readNextRow()
         } else {
-            nextRow = null // If there aren't any defined columns, there will never be any meaningful row data
+            nextValue = null // If there aren't any defined columns, there will never be any meaningful row data
         }
     }
 
     @Override
     boolean hasNext() {
-        return nextRow != null
+        return nextValue != null
     }
 
     @Override
     Map<String, String> next() {
-        if (nextRow == null) {
+        if (nextValue == null) {
             throw new NoSuchElementException()
         }
-        def nextValue = toExternalRow(nextRow)
+        Map<String, String> valueToReturn = nextValue
         readNextRow()
-        return nextValue
+        return valueToReturn
     }
 
     @Override
@@ -50,11 +50,12 @@ class RowIterator implements Iterator<Map<String, String>> {
     }
 
     private void readNextRow() {
-        nextRow = null
-        while (rowIterator.hasNext() && nextRow == null) {
+        nextValue = null
+        while (rowIterator.hasNext() && nextValue == null) {
             def row = rowIterator.next()
-            if (!rowSkipCriteria(toExternalRow(row))) {
-                nextRow = row
+            Map<String, String> nextValueCandidate = toExternalRow(row)
+            if (!rowSkipCriteria(nextValueCandidate)) {
+                nextValue = nextValueCandidate
             }
         }
     }
