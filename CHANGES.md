@@ -1,4 +1,7 @@
 # Change Log
+*   1.2.2
+    *   Fixes an issue where reading data from any CSV file failed 
+    
 *   1.2.1
     *   POI: only apply cell mappings/transformations once per row. [#4](https://github.com/commercehub-oss/griddle/issues/4)
 
