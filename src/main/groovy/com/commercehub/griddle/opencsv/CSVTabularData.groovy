@@ -24,7 +24,7 @@ class CSVTabularData implements TabularData, Closeable {
     }
 
     @Override
-    Collection<String> getColumnNames() {
+    Iterable<String> getColumnNames() {
         return Collections.unmodifiableCollection(columnNames)
     }
 
@@ -36,7 +36,7 @@ class CSVTabularData implements TabularData, Closeable {
     @Override
     Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
         return {
-            new RowIterator(openReader(1), columnNames, valueTransformer, rowSkipCriteria)
+            new RowIterator(openReader(1), this.@columnNames, valueTransformer, rowSkipCriteria)
         } as Iterable<Map<String, String>>
     }
 
