@@ -10,7 +10,7 @@ class SheetTabularData implements TabularData {
     private final Closure<String> valueTransformer
     private final ExcelCellMapper cellMapper
     private final Map<Integer, String> transformedColumnNamesByIndex
-	private final List<String> transformedColumnNames
+    private final List<String> transformedColumnNames
 
     SheetTabularData(Sheet sheet, Closure<String> columnNameTransformer, Closure<String> valueTransformer,
                      ExcelCellMapper cellMapper) {
@@ -18,17 +18,17 @@ class SheetTabularData implements TabularData {
         this.valueTransformer = valueTransformer
         this.cellMapper = cellMapper
         def headerRow = sheet.getRow(0)
-		
-		transformedColumnNamesByIndex = [:]
-		transformedColumnNames = []
-		
-		headerRow?.each {
-			def transformedColumnName = columnNameTransformer(cellMapper.mapCell(it))
-			if (transformedColumnName) {
-				transformedColumnNamesByIndex << [(it.columnIndex):transformedColumnName]
-				transformedColumnNames << transformedColumnName
-			}
-		}
+        
+        transformedColumnNamesByIndex = [:]
+        transformedColumnNames = []
+        
+        headerRow?.each {
+            def transformedColumnName = columnNameTransformer(cellMapper.mapCell(it))
+            if (transformedColumnName) {
+                transformedColumnNamesByIndex << [(it.columnIndex):transformedColumnName]
+                transformedColumnNames << transformedColumnName
+            }
+        }
     }
 
     @Override
