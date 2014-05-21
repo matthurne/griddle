@@ -5,15 +5,15 @@ import au.com.bytecode.opencsv.CSVReader
 class RowIterator implements Iterator<Map<String, String>> {
 
     private final CSVReader reader
-    private final List<String> columnNames
+    private final Map<Integer,String> transformedColumnNamesByIndex
     private final Closure<String> valueTransformer
     private final Closure<Boolean> rowSkipCriteria
     private String[] nextRow
 
-    RowIterator(CSVReader reader, List<String> columnNames, Closure<String> valueTransformer,
+    RowIterator(CSVReader reader, Map<Integer,String> transformedColumnNamesByIndex, Closure<String> valueTransformer,
                 Closure<Boolean> rowSkipCriteria) {
         this.reader = reader
-        this.columnNames = columnNames
+        this.transformedColumnNamesByIndex = transformedColumnNamesByIndex
         this.valueTransformer = valueTransformer
         this.rowSkipCriteria = rowSkipCriteria
         readNextRow()
@@ -51,8 +51,9 @@ class RowIterator implements Iterator<Map<String, String>> {
 
     private Map<String, String> toExternalRow(String[] internalRow) {
         def externalRow = [:]
-        columnNames.eachWithIndex { String columnName, int columnIndex ->
-            if (columnName) {
+        transformedColumnNamesByIndex.each { Integer columnIndex, String columnName ->
+            def columnValue = internalRow[columnIndex]
+            if (columnName && columnValue) {
                 externalRow[columnName] = valueTransformer(internalRow[columnIndex])
             }
         }
