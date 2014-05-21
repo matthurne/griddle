@@ -4,7 +4,7 @@ interface TabularData {
 
     final Closure<Boolean> NEVER_SKIP = { false }
 
-    Iterable<String> getColumnNames()
+    List<String> getColumnNames()
 
     Iterable<Map<String, String>> getRows()
 

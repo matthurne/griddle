@@ -1,6 +1,7 @@
 package com.commercehub.griddle.poi.streaming
 
 import com.commercehub.griddle.TabularData
+
 import org.apache.poi.hssf.util.CellReference
 import org.apache.poi.ss.usermodel.DataFormatter
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable
@@ -17,7 +18,8 @@ class StreamingXSSFTabularData implements TabularData {
     protected final Closure<String> valueTransformer
 
     protected final InputStream inputStream
-    protected final Map<Integer, String> transformedColumnNames
+    protected final Map<Integer, String> transformedColumnNamesByIndex
+    protected final List<String> transformedColumnNames
 
     protected SheetDataContainer dataContainer
     protected use1904DateWindowing
@@ -35,18 +37,21 @@ class StreamingXSSFTabularData implements TabularData {
 
         loadSheet(new SheetDataExtractor(dataContainer), stylesTable, sharedStringsTable, inputStream, use1904DateWindowing)
 
-        if (dataContainer.headers) {
-            transformedColumnNames = dataContainer.headers.collectEntries {
-                [(Integer) it.key, columnNameTransformer(it.value)]
-            }.findAll { it.value }
-        } else {
-            transformedColumnNames = [:]
-        }
+		transformedColumnNamesByIndex = [:]
+		transformedColumnNames = []
+		
+		dataContainer.headers?.each {
+			def transformedColumnName = columnNameTransformer(it.value)
+			if (transformedColumnName) {
+				transformedColumnNamesByIndex << [(it.key):transformedColumnName]
+				transformedColumnNames << transformedColumnName
+			}
+		}
     }
 
     @Override
-    Collection<String> getColumnNames() {
-        Collections.unmodifiableCollection(transformedColumnNames.values())
+    List<String> getColumnNames() {
+        return Collections.unmodifiableList(transformedColumnNames)
     }
 
     @Override
@@ -58,7 +63,7 @@ class StreamingXSSFTabularData implements TabularData {
     @Override
     Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
         return {
-            new SheetDataContainerBackedRowIterator(dataContainer, transformedColumnNames, valueTransformer, rowSkipCriteria)
+            new SheetDataContainerBackedRowIterator(dataContainer, transformedColumnNamesByIndex, valueTransformer, rowSkipCriteria)
         } as Iterable<Map<String, String>>
     }
 

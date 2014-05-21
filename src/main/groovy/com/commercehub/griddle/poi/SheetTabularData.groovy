@@ -1,6 +1,7 @@
 package com.commercehub.griddle.poi
 
 import com.commercehub.griddle.TabularData
+
 import org.apache.poi.ss.usermodel.Sheet
 
 class SheetTabularData implements TabularData {
@@ -8,7 +9,8 @@ class SheetTabularData implements TabularData {
     private final Sheet sheet
     private final Closure<String> valueTransformer
     private final ExcelCellMapper cellMapper
-    private final Map<Integer, String> columns
+    private final Map<Integer, String> transformedColumnNamesByIndex
+	private final List<String> transformedColumnNames
 
     SheetTabularData(Sheet sheet, Closure<String> columnNameTransformer, Closure<String> valueTransformer,
                      ExcelCellMapper cellMapper) {
@@ -16,18 +18,22 @@ class SheetTabularData implements TabularData {
         this.valueTransformer = valueTransformer
         this.cellMapper = cellMapper
         def headerRow = sheet.getRow(0)
-        if (headerRow) {
-            columns = headerRow.collectEntries {
-                [it.columnIndex, columnNameTransformer(cellMapper.mapCell(it))]
-            }.findAll { it.value }
-        } else {
-            columns = [:]
-        }
+		
+		transformedColumnNamesByIndex = [:]
+		transformedColumnNames = []
+		
+		headerRow?.each {
+			def transformedColumnName = columnNameTransformer(cellMapper.mapCell(it))
+			if (transformedColumnName) {
+				transformedColumnNamesByIndex << [(it.columnIndex):transformedColumnName]
+				transformedColumnNames << transformedColumnName
+			}
+		}
     }
 
     @Override
-    Collection<String> getColumnNames() {
-        return Collections.unmodifiableCollection(columns.values())
+    List<String> getColumnNames() {
+        return Collections.unmodifiableList(transformedColumnNames)
     }
 
     @Override
@@ -38,7 +44,7 @@ class SheetTabularData implements TabularData {
     @Override
     Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
         return {
-            new RowIterator(sheet, columns, valueTransformer, cellMapper, rowSkipCriteria)
+            new RowIterator(sheet, transformedColumnNamesByIndex, valueTransformer, cellMapper, rowSkipCriteria)
         } as Iterable<Map<String, String>>
     }
 

@@ -9,7 +9,7 @@ class CSVTabularData implements TabularData, Closeable {
 
     private File file
     private final Closure<String> valueTransformer
-    private final List<String> columnNames
+    private final List<String> transformedColumnNames
     private final List<CSVReader> readers = []
 
     CSVTabularData(File file, Closure<String> columnNameTransformer, Closure<String> valueTransformer) {
@@ -17,15 +17,15 @@ class CSVTabularData implements TabularData, Closeable {
         this.valueTransformer = valueTransformer
         def reader = openReader()
         try {
-            columnNames = reader.readNext().collect(columnNameTransformer)
+            transformedColumnNames = reader.readNext().collect(columnNameTransformer)
         } finally {
             closeReader(reader)
         }
     }
 
     @Override
-    Iterable<String> getColumnNames() {
-        return Collections.unmodifiableCollection(columnNames)
+    List<String> getColumnNames() {
+        return Collections.unmodifiableList(transformedColumnNames)
     }
 
     @Override
@@ -36,7 +36,7 @@ class CSVTabularData implements TabularData, Closeable {
     @Override
     Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
         return {
-            new RowIterator(openReader(1), this.@columnNames, valueTransformer, rowSkipCriteria)
+            new RowIterator(openReader(1), transformedColumnNames, valueTransformer, rowSkipCriteria)
         } as Iterable<Map<String, String>>
     }
 
