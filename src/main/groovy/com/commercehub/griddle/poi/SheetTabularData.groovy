@@ -18,14 +18,14 @@ class SheetTabularData implements TabularData {
         this.valueTransformer = valueTransformer
         this.cellMapper = cellMapper
         def headerRow = sheet.getRow(0)
-        
+
         transformedColumnNamesByIndex = [:]
         transformedColumnNames = []
-        
+
         headerRow?.each {
             def transformedColumnName = columnNameTransformer(cellMapper.mapCell(it))
             if (transformedColumnName) {
-                transformedColumnNamesByIndex << [(it.columnIndex):transformedColumnName]
+                transformedColumnNamesByIndex[it.columnIndex] = transformedColumnName
                 transformedColumnNames << transformedColumnName
             }
         }

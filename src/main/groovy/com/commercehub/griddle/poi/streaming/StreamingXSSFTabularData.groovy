@@ -43,7 +43,7 @@ class StreamingXSSFTabularData implements TabularData {
         dataContainer.headers?.each {
             def transformedColumnName = columnNameTransformer(it.value)
             if (transformedColumnName) {
-                transformedColumnNamesByIndex << [(it.key):transformedColumnName]
+                transformedColumnNamesByIndex[it.key] = transformedColumnName
                 transformedColumnNames << transformedColumnName
             }
         }

@@ -27,7 +27,7 @@ class CSVTabularData implements TabularData, Closeable {
             headerRow?.eachWithIndex { String columnName, int index ->
                 def transformedColumnName = columnNameTransformer(columnName)
                 if (transformedColumnName) {
-                    transformedColumnNamesByIndex << [(index):transformedColumnName]
+                    transformedColumnNamesByIndex[index] = transformedColumnName
                     transformedColumnNames << transformedColumnName
                 }
             }

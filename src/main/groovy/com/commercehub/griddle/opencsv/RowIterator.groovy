@@ -54,7 +54,7 @@ class RowIterator implements Iterator<Map<String, String>> {
         transformedColumnNamesByIndex.each { Integer columnIndex, String columnName ->
             def columnValue = internalRow[columnIndex]
             if (columnName && columnValue) {
-                externalRow[columnName] = valueTransformer(internalRow[columnIndex])
+                externalRow[columnName] = valueTransformer(columnValue)
             }
         }
         return externalRow
