@@ -73,3 +73,40 @@ Sometimes, it may be useful to ignore certain rows in the file.  To do this, whe
 ## Modifying formatting when using StreamingXSSFTabularDataSource
 
 The `StreamingXSSFTabularDataSource` relies on `org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler` to format output, which provides for minimal formatting extension points.  Overriding the handlerBuilder method of `StreamingXSSFTabularData` to return a customized `org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler` is the only current mechanism to manipulate the default formatting/mapping behavior.
+
+# Development
+
+## Releasing
+Releases are uploaded to [Bintray](https://bintray.com/) via the
+[gradle-release](https://github.com/townsfolk/gradle-release) plugin and
+[gradle-bintray-plugin](https://github.com/bintray/gradle-bintray-plugin). To upload a new release, you need to be a
+member of the [commercehub-oss Bintray organization](https://bintray.com/commercehub-oss). You need to specify your
+Bintray username and API key when uploading. Your API key can be found on your
+[Bintray user profile page](https://bintray.com/profile/edit). You can put your username and API key in
+`~/.gradle/gradle.properties` like so:
+
+    bintrayUserName = johndoe
+    bintrayApiKey = 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+
+Then, to upload the release:
+
+    ./gradlew release
+
+Alternatively, you can specify your Bintray username and API key on the command line:
+
+    ./gradlew -PbintrayUserName=johndoe -PbintrayApiKey=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef release
+
+The `release` task will prompt you to enter the version to be released, and will create and push a release tag for the
+specified version. It will also upload the release artifacts to Bintray.
+
+After the release artifacts have been uploaded to Bintray, they must be published to become visible to users. See
+Bintray's [Publishing](https://bintray.com/docs/uploads/uploads_publishing.html) documentation for instructions.
+
+After publishing the release on Bintray, it's also nice to create a GitHub release. To do so:
+*   Visit the project's [releases](https://github.com/commercehub-oss/griddle/releases) page
+*   Click the "Draft a new release" button
+*   Select the tag that was created by the Gradle `release` task
+*   Enter a title; typically, this should match the tag (e.g. "1.2.0")
+*   Enter a description of what changed since the previous release (see the
+    [changelog](https://github.com/commercehub-oss/griddle/blob/master/CHANGES.md))
+*   Click the "Publish release" button
