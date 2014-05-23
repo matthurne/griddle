@@ -9,23 +9,37 @@ class CSVTabularData implements TabularData, Closeable {
 
     private File file
     private final Closure<String> valueTransformer
-    private final List<String> columnNames
+    private final Map<Integer,String> transformedColumnNamesByIndex
+    private final List<String> transformedColumnNames
     private final List<CSVReader> readers = []
 
     CSVTabularData(File file, Closure<String> columnNameTransformer, Closure<String> valueTransformer) {
         this.file = file
         this.valueTransformer = valueTransformer
+
+        transformedColumnNamesByIndex = [:]
+        transformedColumnNames = []
+
         def reader = openReader()
         try {
-            columnNames = reader.readNext().collect(columnNameTransformer)
+            def headerRow = reader.readNext()
+
+            headerRow?.eachWithIndex { String columnName, int index ->
+                def transformedColumnName = columnNameTransformer(columnName)
+                if (transformedColumnName) {
+                    transformedColumnNamesByIndex[index] = transformedColumnName
+                    transformedColumnNames << transformedColumnName
+                }
+            }
+
         } finally {
             closeReader(reader)
         }
     }
 
     @Override
-    Iterable<String> getColumnNames() {
-        return Collections.unmodifiableCollection(columnNames)
+    List<String> getColumnNames() {
+        return Collections.unmodifiableList(transformedColumnNames)
     }
 
     @Override
@@ -36,7 +50,7 @@ class CSVTabularData implements TabularData, Closeable {
     @Override
     Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
         return {
-            new RowIterator(openReader(1), this.@columnNames, valueTransformer, rowSkipCriteria)
+            new RowIterator(openReader(1), transformedColumnNamesByIndex, valueTransformer, rowSkipCriteria)
         } as Iterable<Map<String, String>>
     }
 

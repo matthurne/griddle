@@ -1,4 +1,7 @@
 # Change Log
+*   2.0.0
+    *   Updates `TabularData.getColumnNames()` to return `List<String>` to reflect their ordered nature, and increases consistency between CSV and POI implementations, specifically around handling missing column names and data.
+
 *   1.2.2
     *   Fixes an issue where reading data from any CSV file failed 
     
