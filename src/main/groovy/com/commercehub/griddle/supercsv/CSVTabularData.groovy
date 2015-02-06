@@ -1,18 +1,17 @@
-package com.commercehub.griddle.opencsv
+package com.commercehub.griddle.supercsv
 
-import au.com.bytecode.opencsv.CSVReader
 import com.commercehub.griddle.TabularData
+import org.supercsv.io.CsvMapReader
+import org.supercsv.io.ICsvMapReader
+import org.supercsv.prefs.CsvPreference
 
-import static au.com.bytecode.opencsv.CSVParser.*
-
-@Deprecated
 class CSVTabularData implements TabularData, Closeable {
 
     private File file
     private final Closure<String> valueTransformer
     private final Map<Integer,String> transformedColumnNamesByIndex
     private final List<String> transformedColumnNames
-    private final List<CSVReader> readers = []
+    private final List<ICsvMapReader> readers = []
 
     CSVTabularData(File file, Closure<String> columnNameTransformer, Closure<String> valueTransformer) {
         this.file = file
@@ -23,8 +22,7 @@ class CSVTabularData implements TabularData, Closeable {
 
         def reader = openReader()
         try {
-            def headerRow = reader.readNext()
-
+            def headerRow = Arrays.asList(reader.getHeader(true))
             headerRow?.eachWithIndex { String columnName, int index ->
                 def transformedColumnName = columnNameTransformer(columnName)
                 if (transformedColumnName) {
@@ -32,7 +30,6 @@ class CSVTabularData implements TabularData, Closeable {
                     transformedColumnNames << transformedColumnName
                 }
             }
-
         } finally {
             closeReader(reader)
         }
@@ -51,29 +48,29 @@ class CSVTabularData implements TabularData, Closeable {
     @Override
     Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
         return {
-            new RowIterator(openReader(1), transformedColumnNamesByIndex, valueTransformer, rowSkipCriteria)
+            new RowIterator(openReader(), transformedColumnNamesByIndex, valueTransformer, rowSkipCriteria)
         } as Iterable<Map<String, String>>
     }
 
     @Override
-    void close() throws IOException {
+    void close() {
         file = null
-        for (reader in new ArrayList<CSVReader>(readers)) {
+        for (reader in new ArrayList<ICsvMapReader>(readers)) {
             closeReader(reader)
         }
     }
 
-    private CSVReader openReader(int startingLine = 0) {
+    private ICsvMapReader openReader() {
         if (file == null) {
             throw new IllegalStateException("No file available")
         }
-        def reader = new CSVReader(new FileReader(file), DEFAULT_SEPARATOR, DEFAULT_QUOTE_CHARACTER,
-                DEFAULT_ESCAPE_CHARACTER, startingLine)
-        readers.add(reader)
+
+        def reader = new CsvMapReader(new FileReader(file), CsvPreference.STANDARD_PREFERENCE)
+        readers << reader
         return reader
     }
 
-    private void closeReader(CSVReader reader) {
+    private void closeReader(ICsvMapReader reader) {
         try {
             reader.close()
         } catch (IOException ignored) { }

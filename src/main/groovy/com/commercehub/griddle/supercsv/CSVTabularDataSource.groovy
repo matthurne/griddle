@@ -1,12 +1,7 @@
-package com.commercehub.griddle.opencsv
+package com.commercehub.griddle.supercsv
 
 import com.commercehub.griddle.BaseTabularDataSource
 
-/**
- * @deprecated This class will be removed in a future release. Use
- * {@link com.commercehub.griddle.supercsv.CSVTabularDataSource} instead, which is a drop-in replacement.
- */
-@Deprecated
 class CSVTabularDataSource extends BaseTabularDataSource {
 
     @Override

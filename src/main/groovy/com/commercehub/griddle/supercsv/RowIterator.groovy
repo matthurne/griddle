@@ -1,22 +1,25 @@
-package com.commercehub.griddle.opencsv
+package com.commercehub.griddle.supercsv
 
-import au.com.bytecode.opencsv.CSVReader
+import org.supercsv.io.ICsvMapReader
 
-@Deprecated
 class RowIterator implements Iterator<Map<String, String>> {
 
-    private final CSVReader reader
+    private final ICsvMapReader reader
     private final Map<Integer,String> transformedColumnNamesByIndex
     private final Closure<String> valueTransformer
     private final Closure<Boolean> rowSkipCriteria
-    private String[] nextRow
+    private final String[] header
+    private Map<String, String> nextRow
 
-    RowIterator(CSVReader reader, Map<Integer,String> transformedColumnNamesByIndex, Closure<String> valueTransformer,
+    RowIterator(ICsvMapReader reader,
+                Map<Integer,String> transformedColumnNamesByIndex,
+                Closure<String> valueTransformer,
                 Closure<Boolean> rowSkipCriteria) {
         this.reader = reader
         this.transformedColumnNamesByIndex = transformedColumnNamesByIndex
         this.valueTransformer = valueTransformer
         this.rowSkipCriteria = rowSkipCriteria
+        header = reader.getHeader(true)
         readNextRow()
     }
 
@@ -41,19 +44,19 @@ class RowIterator implements Iterator<Map<String, String>> {
     }
 
     private void readNextRow() {
-        nextRow = reader.readNext()
+        nextRow = reader.read(header)
         while (nextRow != null && rowSkipCriteria(toExternalRow(nextRow))) {
-            nextRow = reader.readNext()
+            nextRow = reader.read(header)
         }
         if (nextRow == null) {
             reader.close()
         }
     }
 
-    private Map<String, String> toExternalRow(String[] internalRow) {
+    private Map<String, String> toExternalRow(Map<String, String> internalRow) {
         def externalRow = [:]
         transformedColumnNamesByIndex.each { Integer columnIndex, String columnName ->
-            def columnValue = internalRow[columnIndex]
+            def columnValue = internalRow[columnName]
             if (columnName && columnValue) {
                 externalRow[columnName] = valueTransformer(columnValue)
             }
