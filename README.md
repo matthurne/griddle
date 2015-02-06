@@ -29,9 +29,9 @@ Maven:
 </dependency>
 ```
 
-Next, create the desired instance of `TabularDataSource`. Please note that
-`com.commercehub.griddle.opencsv.CSVTabularDataSource` is deprecated; use
-`com.commercehub.griddle.supercsv.CSVTabularDataSource` instead.
+Next, create the desired instance of `TabularDataSource`.
+
+Please note that `com.commercehub.griddle.opencsv.CSVTabularDataSource` is deprecated; use `com.commercehub.griddle.supercsv.CSVTabularDataSource` instead.
 
 ```groovy
 def tabularDataSource = new CSVTabularDataSource()
