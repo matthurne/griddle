@@ -32,9 +32,7 @@ Maven:
 Next, create the desired instance of `TabularDataSource`.
 
 ```groovy
-def tabularDataSource = new com.commercehub.griddle.supercsv.CSVTabularDataSource()
-// OR
-def tabularDataSource = new com.commercehub.griddle.opencsv.CSVTabularDataSource()
+def tabularDataSource = new CSVTabularDataSource()
 // OR
 def tabularDataSource = new HSSFTabularDataSource()
 // OR

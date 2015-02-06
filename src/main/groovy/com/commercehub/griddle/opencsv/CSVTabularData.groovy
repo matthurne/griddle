@@ -5,6 +5,7 @@ import com.commercehub.griddle.TabularData
 
 import static au.com.bytecode.opencsv.CSVParser.*
 
+@Deprecated
 class CSVTabularData implements TabularData, Closeable {
 
     private File file

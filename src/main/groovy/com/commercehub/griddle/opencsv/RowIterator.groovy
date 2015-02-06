@@ -2,6 +2,7 @@ package com.commercehub.griddle.opencsv
 
 import au.com.bytecode.opencsv.CSVReader
 
+@Deprecated
 class RowIterator implements Iterator<Map<String, String>> {
 
     private final CSVReader reader
