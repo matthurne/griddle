@@ -1,5 +1,8 @@
 package com.commercehub.griddle.poi
 
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FromString
+import groovy.transform.stc.SimpleType
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 
@@ -12,8 +15,14 @@ class RowIterator implements Iterator<Map<String, String>> {
     private final Iterator<Row> rowIterator
     private Map<String, String> nextValue
 
-    RowIterator(Sheet sheet, Map<Integer, String> columns, Closure<String> valueTransformer, ExcelCellMapper cellMapper,
-                Closure<Boolean> rowSkipCriteria) {
+    RowIterator(Sheet sheet,
+                Map<Integer, String> columns,
+                @ClosureParams(value=SimpleType, options="java.lang.String")
+                        Closure<String> valueTransformer,
+                ExcelCellMapper cellMapper,
+                @ClosureParams(value=FromString, options="java.util.Map<java.lang.String, java.lang.String>")
+                        Closure<Boolean> rowSkipCriteria) {
+
         this.columns = columns
         this.valueTransformer = valueTransformer
         this.cellMapper = cellMapper

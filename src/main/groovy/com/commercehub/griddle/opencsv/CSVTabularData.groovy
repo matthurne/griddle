@@ -2,6 +2,9 @@ package com.commercehub.griddle.opencsv
 
 import au.com.bytecode.opencsv.CSVReader
 import com.commercehub.griddle.TabularData
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FromString
+import groovy.transform.stc.SimpleType
 
 import static au.com.bytecode.opencsv.CSVParser.*
 
@@ -14,7 +17,10 @@ class CSVTabularData implements TabularData, Closeable {
     private final List<String> transformedColumnNames
     private final List<CSVReader> readers = []
 
-    CSVTabularData(File file, Closure<String> columnNameTransformer, Closure<String> valueTransformer) {
+    CSVTabularData(File file,
+                   @ClosureParams(value=SimpleType, options="java.lang.String") Closure<String> columnNameTransformer,
+                   @ClosureParams(value=SimpleType, options="java.lang.String") Closure<String> valueTransformer) {
+
         this.file = file
         this.valueTransformer = valueTransformer
 
@@ -49,7 +55,9 @@ class CSVTabularData implements TabularData, Closeable {
     }
 
     @Override
-    Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
+    Iterable<Map<String, String>> getRows(@ClosureParams(value=FromString, options="java.util.Map<java.lang.String, java.lang.String>")
+                                                  Closure<Boolean> rowSkipCriteria) {
+
         return {
             new RowIterator(openReader(1), transformedColumnNamesByIndex, valueTransformer, rowSkipCriteria)
         } as Iterable<Map<String, String>>
