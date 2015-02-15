@@ -4,7 +4,7 @@
     *   Add [Super CSV](http://super-csv.github.io/super-csv/)-based `TabularDataSource`
     *   Deprecate opencsv-based `TabularDataSource`; the Super CSV-based `TabularDataSource` should be used instead.
     *   Upgrade to Groovy 2.4.0
-    *   Add @ClosureParams to all public method parameters of type Closure
+    *   Add `@ClosureParams` to all public method parameters of type Closure
 
 *   2.0.1
     *   Upgrade to POI 3.10.1
