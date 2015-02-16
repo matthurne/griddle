@@ -15,7 +15,7 @@ repositories {
     jcenter()
 }
 dependencies {
-    compile "com.commercehub:griddle:3.0.0"
+    compile "com.commercehub:griddle:3.0.1"
 }
 ```
 
@@ -25,7 +25,7 @@ Maven:
 <dependency>
     <groupId>com.commercehub</groupId>
     <artifactId>griddle</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
 </dependency>
 ```
 
