@@ -24,7 +24,7 @@ class StreamingXSSFTabularData implements TabularData {
     protected final List<String> transformedColumnNames
 
     protected SheetDataContainer dataContainer
-    protected use1904DateWindowing
+    protected boolean use1904DateWindowing
 
     StreamingXSSFTabularData(InputStream inputStream,
                              StylesTable stylesTable,
