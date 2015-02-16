@@ -1,5 +1,9 @@
 package com.commercehub.griddle.poi.streaming
 
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FromString
+import groovy.transform.stc.SimpleType
+
 class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String>> {
     private final Map<Integer, String> transformedColumns
     private final Closure<String> valueTransformer
@@ -9,9 +13,13 @@ class SheetDataContainerBackedRowIterator implements Iterator<Map<String, String
     private final Iterator<Map<Integer, String>> delegateIterator
     private Map<Integer, String> nextRowValuesByColumnIndex
 
-    SheetDataContainerBackedRowIterator(SheetDataContainer backingData, Map<Integer, String> transformedColumns,
-                                        Closure<String> valueTransformer,
-                                        Closure<Boolean> rowSkipCriteria) {
+    SheetDataContainerBackedRowIterator(SheetDataContainer backingData,
+                                        Map<Integer, String> transformedColumns,
+                                        @ClosureParams(value=SimpleType, options="java.lang.String")
+                                                Closure<String> valueTransformer,
+                                        @ClosureParams(value=FromString, options="java.util.Map<java.lang.String, java.lang.String>")
+                                                Closure<Boolean> rowSkipCriteria) {
+
         this.backingData = backingData
         this.transformedColumns = transformedColumns
         this.valueTransformer = valueTransformer

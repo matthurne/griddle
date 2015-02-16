@@ -1,5 +1,8 @@
 package com.commercehub.griddle
 
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FromString
+
 interface TabularData {
 
     final Closure<Boolean> NEVER_SKIP = { false }
@@ -14,6 +17,7 @@ interface TabularData {
      * row will be skipped.  If you don't want to skip any rows, use {@link #NEVER_SKIP} (or the convenience signature
      * that has no arguments).
      */
-    Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria)
+    Iterable<Map<String, String>> getRows(@ClosureParams(value=FromString, options="java.util.Map<java.lang.String, java.lang.String>")
+                                                  Closure<Boolean> rowSkipCriteria)
 
 }

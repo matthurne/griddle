@@ -1,7 +1,9 @@
 package com.commercehub.griddle.poi.streaming
 
 import com.commercehub.griddle.TabularData
-
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FromString
+import groovy.transform.stc.SimpleType
 import org.apache.poi.hssf.util.CellReference
 import org.apache.poi.ss.usermodel.DataFormatter
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable
@@ -27,8 +29,8 @@ class StreamingXSSFTabularData implements TabularData {
     StreamingXSSFTabularData(InputStream inputStream,
                              StylesTable stylesTable,
                              ReadOnlySharedStringsTable sharedStringsTable,
-                             Closure<String> columnNameTransformer,
-                             Closure<String> valueTransformer,
+                             @ClosureParams(value=SimpleType, options="java.lang.String") Closure<String> columnNameTransformer,
+                             @ClosureParams(value=SimpleType, options="java.lang.String") Closure<String> valueTransformer,
                              boolean use1904DateWindowing) {
 
         this.inputStream = inputStream
@@ -61,7 +63,9 @@ class StreamingXSSFTabularData implements TabularData {
 
     // column name -> value
     @Override
-    Iterable<Map<String, String>> getRows(Closure<Boolean> rowSkipCriteria) {
+    Iterable<Map<String, String>> getRows(@ClosureParams(value=FromString, options="java.util.Map<java.lang.String, java.lang.String>")
+                                                  Closure<Boolean> rowSkipCriteria) {
+
         return {
             new SheetDataContainerBackedRowIterator(dataContainer, transformedColumnNamesByIndex, valueTransformer, rowSkipCriteria)
         } as Iterable<Map<String, String>>

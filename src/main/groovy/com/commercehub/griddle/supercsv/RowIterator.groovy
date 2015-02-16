@@ -1,5 +1,8 @@
 package com.commercehub.griddle.supercsv
 
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FromString
+import groovy.transform.stc.SimpleType
 import org.supercsv.io.ICsvMapReader
 
 class RowIterator implements Iterator<Map<String, String>> {
@@ -13,8 +16,11 @@ class RowIterator implements Iterator<Map<String, String>> {
 
     RowIterator(ICsvMapReader reader,
                 Map<Integer,String> transformedColumnNamesByIndex,
-                Closure<String> valueTransformer,
-                Closure<Boolean> rowSkipCriteria) {
+                @ClosureParams(value=SimpleType, options="java.lang.String")
+                        Closure<String> valueTransformer,
+                @ClosureParams(value=FromString, options="java.util.Map<java.lang.String, java.lang.String>")
+                        Closure<Boolean> rowSkipCriteria) {
+
         this.reader = reader
         this.transformedColumnNamesByIndex = transformedColumnNamesByIndex
         this.valueTransformer = valueTransformer

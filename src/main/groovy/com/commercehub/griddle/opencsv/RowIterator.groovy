@@ -1,6 +1,9 @@
 package com.commercehub.griddle.opencsv
 
 import au.com.bytecode.opencsv.CSVReader
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FromString
+import groovy.transform.stc.SimpleType
 
 @Deprecated
 class RowIterator implements Iterator<Map<String, String>> {
@@ -11,8 +14,13 @@ class RowIterator implements Iterator<Map<String, String>> {
     private final Closure<Boolean> rowSkipCriteria
     private String[] nextRow
 
-    RowIterator(CSVReader reader, Map<Integer,String> transformedColumnNamesByIndex, Closure<String> valueTransformer,
-                Closure<Boolean> rowSkipCriteria) {
+    RowIterator(CSVReader reader,
+                Map<Integer,String> transformedColumnNamesByIndex,
+                @ClosureParams(value=SimpleType, options="java.lang.String")
+                        Closure<String> valueTransformer,
+                @ClosureParams(value=FromString, options="java.util.Map<java.lang.String, java.lang.String>")
+                        Closure<Boolean> rowSkipCriteria) {
+
         this.reader = reader
         this.transformedColumnNamesByIndex = transformedColumnNamesByIndex
         this.valueTransformer = valueTransformer

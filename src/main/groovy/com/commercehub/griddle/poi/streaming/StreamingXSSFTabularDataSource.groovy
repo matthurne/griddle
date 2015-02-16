@@ -1,6 +1,9 @@
 package com.commercehub.griddle.poi.streaming
 
 import com.commercehub.griddle.BaseTabularDataSource
+import com.commercehub.griddle.TabularData
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FromString
 import org.apache.poi.openxml4j.opc.OPCPackage
 import org.apache.poi.openxml4j.opc.PackageAccess
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable
@@ -13,9 +16,12 @@ class StreamingXSSFTabularDataSource extends BaseTabularDataSource {
     protected OPCPackage ocpPackage
 
     @Override
-    void withFile(File file, Closure tableHandler) {
+    void withFile(File file,
+                  @ClosureParams(value=FromString, options="java.lang.Iterable<com.commercehub.griddle.TabularData>")
+                          Closure tableHandler) {
+
         try {
-            def tables = []
+            List<TabularData> tables = []
 
             def reader = getReader(file)
             def sst = new ReadOnlySharedStringsTable(ocpPackage)
