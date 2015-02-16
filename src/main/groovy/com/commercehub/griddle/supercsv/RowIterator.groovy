@@ -3,18 +3,18 @@ package com.commercehub.griddle.supercsv
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FromString
 import groovy.transform.stc.SimpleType
-import org.supercsv.io.ICsvMapReader
+import org.supercsv.io.ICsvListReader
 
 class RowIterator implements Iterator<Map<String, String>> {
 
-    private final ICsvMapReader reader
+    private final ICsvListReader reader
     private final Map<Integer,String> transformedColumnNamesByIndex
     private final Closure<String> valueTransformer
     private final Closure<Boolean> rowSkipCriteria
     private final String[] header
-    private Map<String, String> nextRow
+    private List<String> nextRow
 
-    RowIterator(ICsvMapReader reader,
+    RowIterator(ICsvListReader reader,
                 Map<Integer,String> transformedColumnNamesByIndex,
                 @ClosureParams(value=SimpleType, options="java.lang.String")
                         Closure<String> valueTransformer,
@@ -50,19 +50,19 @@ class RowIterator implements Iterator<Map<String, String>> {
     }
 
     private void readNextRow() {
-        nextRow = reader.read(header)
+        nextRow = reader.read()
         while (nextRow != null && rowSkipCriteria(toExternalRow(nextRow))) {
-            nextRow = reader.read(header)
+            nextRow = reader.read()
         }
         if (nextRow == null) {
             reader.close()
         }
     }
 
-    private Map<String, String> toExternalRow(Map<String, String> internalRow) {
+    private Map<String, String> toExternalRow(List<String> internalRow) {
         def externalRow = [:]
         transformedColumnNamesByIndex.each { Integer columnIndex, String columnName ->
-            def columnValue = internalRow[columnName]
+            def columnValue = internalRow[columnIndex]
             if (columnName && columnValue) {
                 externalRow[columnName] = valueTransformer(columnValue)
             }

@@ -1,5 +1,8 @@
 # Change Log
 
+*   3.0.1
+    *   Fix issue where `com.commercehub.griddle.supercsv.CSVTabularDataSource` returned zero rows when used with a non-default column name transformer
+
 *   3.0.0
     *   Add [Super CSV](http://super-csv.github.io/super-csv/)-based `TabularDataSource`
     *   Deprecate opencsv-based `TabularDataSource`; the Super CSV-based `TabularDataSource` should be used instead.

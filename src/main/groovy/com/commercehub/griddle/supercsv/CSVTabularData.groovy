@@ -4,8 +4,8 @@ import com.commercehub.griddle.TabularData
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FromString
 import groovy.transform.stc.SimpleType
-import org.supercsv.io.CsvMapReader
-import org.supercsv.io.ICsvMapReader
+import org.supercsv.io.CsvListReader
+import org.supercsv.io.ICsvListReader
 import org.supercsv.prefs.CsvPreference
 
 class CSVTabularData implements TabularData, Closeable {
@@ -14,7 +14,7 @@ class CSVTabularData implements TabularData, Closeable {
     private final Closure<String> valueTransformer
     private final Map<Integer,String> transformedColumnNamesByIndex
     private final List<String> transformedColumnNames
-    private final List<ICsvMapReader> readers = []
+    private final List<ICsvListReader> readers = []
 
     CSVTabularData(File file,
                    @ClosureParams(value=SimpleType, options="java.lang.String") Closure<String> columnNameTransformer,
@@ -30,10 +30,12 @@ class CSVTabularData implements TabularData, Closeable {
         try {
             def headerRow = Arrays.asList(reader.getHeader(true))
             headerRow?.eachWithIndex { String columnName, int index ->
-                def transformedColumnName = columnNameTransformer(columnName)
-                if (transformedColumnName) {
-                    transformedColumnNamesByIndex[index] = transformedColumnName
-                    transformedColumnNames << transformedColumnName
+                if (columnName != null) {
+                    def transformedColumnName = columnNameTransformer(columnName)
+                    if (transformedColumnName) {
+                        transformedColumnNamesByIndex[index] = transformedColumnName
+                        transformedColumnNames << transformedColumnName
+                    }
                 }
             }
         } finally {
@@ -63,22 +65,22 @@ class CSVTabularData implements TabularData, Closeable {
     @Override
     void close() {
         file = null
-        for (reader in new ArrayList<ICsvMapReader>(readers)) {
+        for (reader in new ArrayList<ICsvListReader>(readers)) {
             closeReader(reader)
         }
     }
 
-    private ICsvMapReader openReader() {
+    private ICsvListReader openReader() {
         if (file == null) {
             throw new IllegalStateException("No file available")
         }
 
-        def reader = new CsvMapReader(new FileReader(file), CsvPreference.STANDARD_PREFERENCE)
+        def reader = new CsvListReader(new FileReader(file), CsvPreference.STANDARD_PREFERENCE)
         readers << reader
         return reader
     }
 
-    private void closeReader(ICsvMapReader reader) {
+    private void closeReader(ICsvListReader reader) {
         try {
             reader.close()
         } catch (IOException ignored) { }
