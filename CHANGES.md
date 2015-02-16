@@ -1,6 +1,6 @@
 # Change Log
 
-*   2.1.0
+*   3.0.0
     *   Add [Super CSV](http://super-csv.github.io/super-csv/)-based `TabularDataSource`
     *   Deprecate opencsv-based `TabularDataSource`; the Super CSV-based `TabularDataSource` should be used instead.
     *   Upgrade to Groovy 2.4.0
